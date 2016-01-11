@@ -53,27 +53,7 @@ class UI(BaseWidget):
         xsize = 120
         ysize = 120
 
-        im = Image.new("RGB", (xsize,ysize))
-        for i in xrange(xsize):                                                         # Thanks to http://rosettacode.org/wiki/Mandelbrot_set#Python
-            for j in xrange(ysize):
-                x,y = ( x_center + (4.0/self._zoomSlider.value)*float(i-xsize/2)/xsize,
-                          y_center + (4.0/self._zoomSlider.value)*float(j-ysize/2)/ysize
-                        )
-
-                a,b = (0.0, 0.0)
-                iteration = 0
-
-                while (a**2 + b**2 <= 4.0 and iteration < max_iteration):
-                    a,b = a**2 - b**2 + x, 2*a*b + y
-                    iteration += 1
-                if iteration == max_iteration:
-                    color_value = 255
-                else:
-                    color_value = iteration*10 % 255
-                im.putpixel( (i,j), (color_value+self._redSlider.value-(255-self._brightnessSlider.value), color_value+self._greenSlider.value-(255-self._brightnessSlider.value), color_value+self._blueSlider.value-(255-self._brightnessSlider.value)))
-
-        print(x_center)
-        print(y_center)
+        self.makeImage()
         im.show("Generated Set")
 
     def generateAction(self):
@@ -83,25 +63,7 @@ class UI(BaseWidget):
         xsize = 500
         ysize = 500
 
-        im = Image.new("RGB", (xsize,ysize))
-        for i in xrange(xsize):                                                         # Thanks to http://rosettacode.org/wiki/Mandelbrot_set#Python
-            for j in xrange(ysize):
-                x,y = ( x_center + (4.0/self._zoomSlider.value)*float(i-xsize/2)/xsize,
-                          y_center + (4.0/self._zoomSlider.value)*float(j-ysize/2)/ysize
-                        )
-
-                a,b = (0.0, 0.0)
-                iteration = 0
-
-                while (a**2 + b**2 <= 4.0 and iteration < max_iteration):
-                    a,b = a**2 - b**2 + x, 2*a*b + y
-                    iteration += 1
-                if iteration == max_iteration:
-                    color_value = 255
-                else:
-                    color_value = iteration*10 % 255
-                im.putpixel( (i,j), (color_value+self._redSlider.value-(255-self._brightnessSlider.value), color_value+self._greenSlider.value-(255-self._brightnessSlider.value), color_value+self._blueSlider.value-(255-self._brightnessSlider.value)))
-
+        self.makeImage()
 
         im.show("Generated Set")
 
@@ -113,24 +75,8 @@ class UI(BaseWidget):
         xsize = 1366*2
         ysize = 1366*2
 
-        im = Image.new("RGB", (xsize,ysize))
-        for i in xrange(xsize):                                                         # Thanks to http://rosettacode.org/wiki/Mandelbrot_set#Python
-            for j in xrange(ysize):
-                x,y = ( x_center + (4.0/self._zoomSlider.value)*float(i-xsize/2)/xsize,
-                        y_center + (4.0/self._zoomSlider.value)*float(j-ysize/2)/ysize
-                      )
+        self.makeImage()
 
-                a,b = (0.0, 0.0)
-                iteration = 0
-
-                while (a**2 + b**2 <= 4.0 and iteration < max_iteration):
-                    a,b = a**2 - b**2 + x, 2*a*b + y
-                    iteration += 1
-                if iteration == max_iteration:
-                    color_value = 255
-                else:
-                    color_value = iteration*10 % 255
-                im.putpixel( (i,j), (color_value+self._redSlider.value-(255-self._brightnessSlider.value), color_value+self._greenSlider.value-(255-self._brightnessSlider.value), color_value+self._blueSlider.value-(255-self._brightnessSlider.value)))
         im = im.resize((2049, 2049), Image.ANTIALIAS)
         im = im.crop((0, 447, 2049, 1600))
         im.show("Generated Set")
@@ -217,5 +163,25 @@ class UI(BaseWidget):
                     print("Done. There were "+str(len(colorValueArray))+" colors.")
                     done = True
                     im.show("Generated Set")
+
+    def makeImage(self):
+        im = Image.new("RGB", (xsize,ysize))
+        for i in xrange(xsize):                                                         # Thanks to http://rosettacode.org/wiki/Mandelbrot_set#Python
+            for j in xrange(ysize):
+                x,y = ( x_center + (4.0/self._zoomSlider.value)*float(i-xsize/2)/xsize,
+                          y_center + (4.0/self._zoomSlider.value)*float(j-ysize/2)/ysize
+                        )
+
+                a,b = (0.0, 0.0)
+                iteration = 0
+
+                while (a**2 + b**2 <= 4.0 and iteration < max_iteration):
+                    a,b = a**2 - b**2 + x, 2*a*b + y
+                    iteration += 1
+                if iteration == max_iteration:
+                    color_value = 255
+                else:
+                    color_value = iteration*10 % 255
+                im.putpixel( (i,j), (color_value+self._redSlider.value-(255-self._brightnessSlider.value), color_value+self._greenSlider.value-(255-self._brightnessSlider.value), color_value+self._blueSlider.value-(255-self._brightnessSlider.value)))
 
 if __name__ == "__main__": pyforms.startApp(UI)
