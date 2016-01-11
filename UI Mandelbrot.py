@@ -4,23 +4,12 @@ import pyforms
 from   pyforms          import BaseWidget
 from   pyforms.Controls import ControlSlider
 from   pyforms.Controls import ControlButton
-from   pyforms.Controls import ControlImage
 from   pyforms.Controls import ControlText
 from   pyforms.Controls import ControlNumber
 
 import random
-import thread
-import threading
 
 from PIL import Image
-
-global XSCREEN
-XSCREEN = 500
-
-global YSCREEN
-YSCREEN = 500
-
-image = Image.new("RGB", (XSCREEN, YSCREEN))
 
 class UI(BaseWidget):
     def __init__(self):
@@ -47,13 +36,11 @@ class UI(BaseWidget):
         self._generateButton       = ControlButton(label="Generate (500x500)")
         self._generateButton.value = self.generateAction
 
-        self._exportButton         = ControlButton(label="Export For Desktop (1366x768)")
+        self._exportButton         = ControlButton(label="Export For Desktop (2049x1153)")
         self._exportButton.value   = self.exportAction
 
         self._randomButton         = ControlButton(label="Randomize")
         self._randomButton.value = self.randomAction
-
-        self._mandelbrotImage      = ControlImage()
 
         self._formset = [
             ('_redSlider', '_greenSlider', '_blueSlider', '_brightnessSlider', "=", '_entropySlider', '_xSlider', '_ySlider', '_zoomSlider', "=", '_randomButton', '_randomPreviewButton', '_previewButton', '_generateButton', '_exportButton')
@@ -67,7 +54,7 @@ class UI(BaseWidget):
         ysize = 120
 
         im = Image.new("RGB", (xsize,ysize))
-        for i in xrange(xsize):
+        for i in xrange(xsize):                                                         # Thanks to http://rosettacode.org/wiki/Mandelbrot_set#Python
             for j in xrange(ysize):
                 x,y = ( x_center + (4.0/self._zoomSlider.value)*float(i-xsize/2)/xsize,
                           y_center + (4.0/self._zoomSlider.value)*float(j-ysize/2)/ysize
@@ -97,7 +84,7 @@ class UI(BaseWidget):
         ysize = 500
 
         im = Image.new("RGB", (xsize,ysize))
-        for i in xrange(xsize):
+        for i in xrange(xsize):                                                         # Thanks to http://rosettacode.org/wiki/Mandelbrot_set#Python
             for j in xrange(ysize):
                 x,y = ( x_center + (4.0/self._zoomSlider.value)*float(i-xsize/2)/xsize,
                           y_center + (4.0/self._zoomSlider.value)*float(j-ysize/2)/ysize
@@ -127,7 +114,7 @@ class UI(BaseWidget):
         ysize = 1366*2
 
         im = Image.new("RGB", (xsize,ysize))
-        for i in xrange(xsize):
+        for i in xrange(xsize):                                                         # Thanks to http://rosettacode.org/wiki/Mandelbrot_set#Python
             for j in xrange(ysize):
                 x,y = ( x_center + (4.0/self._zoomSlider.value)*float(i-xsize/2)/xsize,
                         y_center + (4.0/self._zoomSlider.value)*float(j-ysize/2)/ysize
@@ -184,7 +171,7 @@ class UI(BaseWidget):
             colorCount = 0
             colorRatio = False
 
-            for i in xrange(xsize):
+            for i in xrange(xsize):                                                         # Thanks to http://rosettacode.org/wiki/Mandelbrot_set#Python
                 for j in xrange(ysize):
                     x,y = ( x_center + (4.0/self._zoomSlider.value)*float(i-xsize/2)/xsize,
                               y_center + (4.0/self._zoomSlider.value)*float(j-ysize/2)/ysize
@@ -205,7 +192,7 @@ class UI(BaseWidget):
                     if len(colorValueArray) == 0:
                         colorValueArray.append(color_value)
 
-                    for color in colorValueArray:
+                    for color in colorValueArray:   # I wrote all this code, and it works. Despite these facts, I have not the slightest clue why.
                         if color_value != color:
                             colorValueArray.append(color_value)
                             break
@@ -213,14 +200,14 @@ class UI(BaseWidget):
 
                     im.putpixel( (i,j), (color_value+self._redSlider.value-(255-self._brightnessSlider.value), color_value+self._greenSlider.value-(255-self._brightnessSlider.value), color_value+self._blueSlider.value-(255-self._brightnessSlider.value)))
 
-            if not len(colorValueArray) <= 600:
+            if not len(colorValueArray) <= 600: # THERE MUST BE A BETTER WAY TO DO THIS! But I don't particularly care.
                 colorChecker = 0
                 colorCheckerTwo = 0
                 while colorChecker <= 255:
                     while colorCheckerTwo <= 255:
                         colorAmount = colorValueArray.count(colorChecker)
                         colorAmount += colorValueArray.count(colorCheckerTwo)
-                        if colorAmount > (len(colorValueArray)/2.5):
+                        if colorAmount > (len(colorValueArray)/2.5):    # Change the 2.5 value to adjust the parameter for what is considered interesting. For example, if you want it to ignore any image where two colors take up more than 75% of the image, change /2.5 to *.75
                             colorRatio = True
                             break
                         else:
