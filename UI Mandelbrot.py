@@ -119,14 +119,19 @@ class UI(BaseWidget):
                     color_value = iteration*10 % 255
                 # im.putpixel( (i,j), (color_value+self._redSlider.value-(255-self._brightnessSlider.value), color_value+self._greenSlider.value-(255-self._brightnessSlider.value), color_value+self._blueSlider.value-(255-self._brightnessSlider.value)))
                 im.putpixel( (i, j), (colorFinder(self._redSlider.value, self._redSliderTwo.value, color_value), colorFinder(self._greenSlider.value, self._greenSliderTwo.value, color_value), colorFinder(self._blueSlider.value, self._blueSliderTwo.value, color_value)))
+                im.resize((2049, 2049), Image.ANTIALIAS)
+                im.crop(0, 448, 2049, 1600)
+                im.save("/root/Documents/Fractals/fractal"+str(time.time()), "JPEG", quality=95)
+                im.show(title="Generated Set")
+
 
     def fourKExportAction(self):
         global xsize
         global ysize
         global max_iteration
         max_iteration = 500
-        xsize = 3840*1.2
-        ysize = 3840*1.2
+        xsize = int(3840*1.2)
+        ysize = int(3840*1.2)
         x_center = float(self._xSlider.value)
         y_center =  float(self._ySlider.value)
 
@@ -196,8 +201,8 @@ class UI(BaseWidget):
                 # im.putpixel( (i,j), (color_value+self._redSlider.value-(255-self._brightnessSlider.value), color_value+self._greenSlider.value-(255-self._brightnessSlider.value), color_value+self._blueSlider.value-(255-self._brightnessSlider.value)))
                 im.putpixel( (i, j), (colorFinder(self._redSlider.value, self._redSliderTwo.value, color_value), colorFinder(self._greenSlider.value, self._greenSliderTwo.value, color_value), colorFinder(self._blueSlider.value, self._blueSliderTwo.value, color_value)))
 
-        im = im.resize((1920, 1920), Image.ANTIALIAS)
-        im = im.crop((0, 0, 1080, 1920))
+        im = im.resize((2970, 2970), Image.ANTIALIAS)
+        im = im.crop((675, 0, 2295, 2970))
         im.save("/root/Documents/Fractals/fractal"+str(int(time.time()))+".jpg", "JPEG", quality=95)
         im.show(title="Generated Set")
 
@@ -308,10 +313,6 @@ class UI(BaseWidget):
         x_center = float(self._xSlider.value)
         y_center =  float(self._ySlider.value)
 
-        redStep = int(abs(self._redSlider.value - self._redSliderTwo.value) / 255);
-        greenStep = int(abs(self._greenSlider.value - self._greenSliderTwo.value) / 255);
-        blueStep = int(abs(self._blueSlider.value - self._blueSliderTwo.value) / 255);
-
         im = Image.new("RGB", (xsize,ysize))
         for i in xrange(xsize):                                                         # Thanks to http://rosettacode.org/wiki/Mandelbrot_set#Python
             for j in xrange(ysize):
@@ -336,8 +337,14 @@ class UI(BaseWidget):
         im.show(title="Generated Set")
 
 def colorFinder(c1, c2, stage):
-    step = abs(c1-c2)/255
-    return c1+(step*stage)
+    step = float(abs(float(c1)-float(c2))/255)
+    c1 = 255-c1
+    c2 = 255-c2
+
+    if c1 < c2:
+        return int(c1+(step*stage))
+    else:
+        return int(255-(c2+(step*stage)))
 
 
 if __name__ == "__main__": pyforms.startApp(UI)
